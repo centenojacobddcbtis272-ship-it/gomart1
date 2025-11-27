@@ -129,7 +129,7 @@ def registro():
 
 
 # ============================================================
-# PRODUCTOS (con buscador y categorías)
+# PRODUCTOS + BUSCADOR
 # ============================================================
 @app.route("/productos")
 def productos():
@@ -194,6 +194,10 @@ def carrito():
             if prod:
                 prod["cantidad"] = item["cantidad"]
                 prod["subtotal"] = prod["precio"] * prod["cantidad"]
+
+                # 🔥 FIX IMPORTANTE
+                prod["_id"] = str(prod["_id"])
+
                 total += prod["subtotal"]
                 items.append(prod)
 
@@ -255,7 +259,7 @@ def pago():
 
 
 # ============================================================
-# API CARRITO (agregar, actualizar, eliminar)
+# API CARRITO
 # ============================================================
 @app.route("/api/add_cart", methods=["POST"])
 def add_cart():
