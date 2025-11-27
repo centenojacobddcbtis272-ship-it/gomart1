@@ -56,21 +56,24 @@
 
             </ul>
 
-            <!-- BUSCADOR -->
-            <form class="d-flex me-3" action="{{ url_for('productos') }}">
-                <input class="form-control search-input" name="q" type="search" placeholder="Buscar productos...">
+            <!-- BUSCADOR CON AUTOCOMPLETADO -->
+            <form class="d-flex me-3 position-relative" action="{{ url_for('productos') }}" style="width: 260px;">
+                <input id="buscar" class="form-control search-input" name="q" type="search"
+                    placeholder="Buscar productos..." autocomplete="off">
+
+                <!-- SUGERENCIAS -->
+                <div id="sugerencias" class="list-group position-absolute w-100" style="top: 40px; z-index: 9999;">
+                </div>
             </form>
 
             <!-- LOGIN / USUARIO -->
             <div class="d-flex align-items-center gap-2">
 
                 {% if not user %}
-                <!-- Login -->
                 <a class="btn btn-outline-primary" href="{{ url_for('login') }}">
                     Iniciar sesión
                 </a>
 
-                <!-- Registro -->
                 <a class="btn btn-primary" href="{{ url_for('registro') }}">
                     Registrarse
                 </a>
@@ -82,8 +85,7 @@
                     👤 {{ user.nombre_completo }}
                 </a>
 
-
-                <!-- Carrito visible siempre -->
+                <!-- Carrito -->
                 <a class="btn btn-outline-primary position-relative me-3" href="{{ url_for('carrito') }}">
                     <i class="fa fa-shopping-cart fa-lg"></i>
 
@@ -93,16 +95,14 @@
                     </span>
                 </a>
 
-
-
                 <!-- Logout -->
                 <a class="btn btn-outline-danger" href="{{ url_for('logout') }}">
                     Cerrar sesión
                 </a>
 
                 {% endif %}
-
             </div>
+
         </div>
     </div>
 </nav>

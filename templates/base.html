@@ -36,8 +36,55 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
+
         /* ============================================================
-           🔥 AGREGAR PRODUCTO AL CARRITO (VISTA PRODUCTOS)
+            🔎 AUTOCOMPLETADO DE BUSCADOR (TIPO AMAZON)
+        ============================================================ */
+        const inputBuscar = document.getElementById("buscar");
+        const cajaSugerencias = document.getElementById("sugerencias");
+
+        if (inputBuscar) {
+            inputBuscar.addEventListener("input", function () {
+                let q = this.value.trim();
+
+                if (q.length < 1) {
+                    cajaSugerencias.innerHTML = "";
+                    return;
+                }
+
+                fetch("/api/buscar?q=" + q)
+                    .then(r => r.json())
+                    .then(data => {
+                        let html = "";
+
+                        if (data.length === 0) {
+                            html = `<div class="list-group-item text-muted">Sin resultados...</div>`;
+                        } else {
+                            data.forEach(p => {
+                                html += `
+                                    <a href="/productos?q=${p.nombre}"
+                                       class="list-group-item list-group-item-action">
+                                        ${p.nombre}
+                                    </a>
+                                `;
+                            });
+                        }
+
+                        cajaSugerencias.innerHTML = html;
+                    });
+            });
+        }
+
+        // Ocultar sugerencias cuando se hace clic fuera
+        document.addEventListener("click", function (e) {
+            if (e.target.id !== "buscar") {
+                if (cajaSugerencias) cajaSugerencias.innerHTML = "";
+            }
+        });
+
+
+        /* ============================================================
+            🛒 AGREGAR PRODUCTO AL CARRITO
         ============================================================ */
         function agregarAlCarrito(id) {
             fetch("/api/add_cart", {
@@ -56,7 +103,6 @@
                         return;
                     }
 
-                    // Toast bonito
                     Swal.fire({
                         toast: true,
                         position: "bottom-end",
@@ -71,7 +117,7 @@
         }
 
         /* ============================================================
-           🔄 ACTUALIZAR CONTADOR EN ICONO DEL CARRITO
+            🔄 ACTUALIZAR CONTADOR DEL CARRITO
         ============================================================ */
         function actualizarCarritoUI() {
             fetch("/api/cart/count")
@@ -85,45 +131,9 @@
                     }
                 });
         }
+
         document.addEventListener("DOMContentLoaded", actualizarCarritoUI);
 
-
-        /* ============================================================
-           🔁 SUMAR / RESTAR / ELIMINAR PRODUCTO (VISTA CARRITO)
-        ============================================================ */
-        function updateCart(id, action) {
-            let url = "";
-
-            if (action === "add") url = "/api/cart/add";
-            if (action === "remove") url = "/api/cart/remove";
-            if (action === "delete") url = "/api/cart/delete";
-
-            fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id })
-            })
-                .then(r => r.json())
-                .then(res => {
-                    if (res.ok) {
-                        actualizarCarritoUI();
-                        location.reload(); // actualizar totales
-                    }
-                });
-        }
-
-        /* ============================================================
-           🛒 FINALIZAR COMPRA
-        ============================================================ */
-        function finalizarCompra() {
-            Swal.fire({
-                icon: "success",
-                title: "Compra realizada correctamente",
-                confirmButtonText: "Aceptar"
-            }).then(() => {
-                location.href = "/";
-            });
-        }
     </script>
 
 </body>

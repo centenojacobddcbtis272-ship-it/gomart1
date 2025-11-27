@@ -5,7 +5,7 @@ import bcrypt
 import config
 import os
 from werkzeug.utils import secure_filename
-from datetime import datetime   # <-- IMPORTANTE
+from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
@@ -26,7 +26,6 @@ else:
 
 client = MongoClient(MONGO_URI)
 db = client["gomart"]
-
 
 # ============================================================
 # Helpers
@@ -130,21 +129,49 @@ def registro():
 
 
 # ============================================================
-# PRODUCTOS
+# PRODUCTOS (con buscador y categorías)
 # ============================================================
 @app.route("/productos")
 def productos():
     categoria = request.args.get("categoria")
+    q = request.args.get("q")
+
+    query = {}
 
     if categoria:
-        productos = list(db.productos.find({"categoria": categoria}))
-    else:
-        productos = list(db.productos.find())
+        query["categoria"] = categoria
+
+    if q:
+        query["nombre"] = {"$regex": q, "$options": "i"}
+
+    productos = list(db.productos.find(query))
 
     return render_template("productos.html",
                            productos=productos,
                            categoria=categoria,
+                           q=q,
                            user=usuario_actual())
+
+
+# ============================================================
+# API AUTOCOMPLETADO
+# ============================================================
+@app.route("/api/buscar")
+def api_buscar():
+    q = request.args.get("q", "")
+
+    if q == "":
+        return jsonify([])
+
+    resultados = list(db.productos.find(
+        {"nombre": {"$regex": q, "$options": "i"}},
+        {"nombre": 1}
+    ).limit(6))
+
+    for r in resultados:
+        r["_id"] = str(r["_id"])
+
+    return jsonify(resultados)
 
 
 # ============================================================
@@ -177,7 +204,7 @@ def carrito():
 
 
 # ============================================================
-# PAGO (CORREGIDO Y COMPLETO)
+# PAGO
 # ============================================================
 @app.route("/pago", methods=["GET", "POST"])
 def pago():
@@ -187,21 +214,17 @@ def pago():
     user_id = ObjectId(session["user_id"])
     carrito = db.carritos.find_one({"user_id": user_id})
 
-    # -----------------------------
-    # PROCESAR COMPRA (POST)
-    # -----------------------------
+    # PROCESAR COMPRA
     if request.method == "POST":
         items_compra = []
         total = 0
 
-        # convertir carrito a historial de compras
         if carrito:
             for item in carrito["items"]:
                 prod = db.productos.find_one({"_id": item["producto_id"]})
                 if prod:
                     subtotal = prod["precio"] * item["cantidad"]
                     total += subtotal
-
                     items_compra.append({
                         "nombre": prod["nombre"],
                         "precio": prod["precio"],
@@ -209,7 +232,6 @@ def pago():
                         "subtotal": subtotal
                     })
 
-        # guardar compra
         db.compras.insert_one({
             "user_id": user_id,
             "items": items_compra,
@@ -217,14 +239,11 @@ def pago():
             "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         })
 
-        # limpiar carrito
         db.carritos.delete_one({"user_id": user_id})
 
         return render_template("pago_exitoso.html", user=usuario_actual())
 
-    # -----------------------------
-    # MOSTRAR TOTAL (GET)
-    # -----------------------------
+    # MOSTRAR TOTAL
     total = 0
     if carrito:
         for item in carrito["items"]:
@@ -236,7 +255,7 @@ def pago():
 
 
 # ============================================================
-# API CARRITO
+# API CARRITO (agregar, actualizar, eliminar)
 # ============================================================
 @app.route("/api/add_cart", methods=["POST"])
 def add_cart():
@@ -274,6 +293,7 @@ def add_cart():
     return jsonify({"ok": True})
 
 
+# SUMAR / RESTAR / ELIMINAR
 @app.route("/api/cart/add", methods=["POST"])
 def cart_add():
     if not usuario_actual():
@@ -284,9 +304,6 @@ def cart_add():
     user_id = ObjectId(session["user_id"])
 
     carrito = db.carritos.find_one({"user_id": user_id})
-
-    if not carrito:
-        return jsonify({"ok": False})
 
     for item in carrito["items"]:
         if item["producto_id"] == prod_id:
@@ -364,7 +381,7 @@ def cart_count():
 
 
 # ============================================================
-# PERFIL DEL USUARIO
+# PERFIL
 # ============================================================
 @app.route("/perfil")
 def perfil():
@@ -457,29 +474,21 @@ def cambiar_foto():
 # ============================================================
 # HISTORIAL DE COMPRAS
 # ============================================================
-# ============================================================
-# HISTORIAL DE COMPRAS
-# ============================================================
 @app.route("/historial")
 def historial():
     user = usuario_actual()
     if not user:
         return redirect(url_for("login"))
 
-    # Convertir user["_id"] a ObjectId si es necesario
-    user_id = user["_id"]
-
-    # obtener compras del usuario
-    compras = list(db.compras.find({"user_id": user_id}))
+    compras = list(db.compras.find({"user_id": user["_id"]}))
 
     return render_template("historial.html",
                            user=user,
                            compras=compras)
 
 
-
 # ============================================================
-# RUN APP
+# RUN
 # ============================================================
 if __name__ == "__main__":
     app.run(debug=True)
