@@ -457,17 +457,25 @@ def cambiar_foto():
 # ============================================================
 # HISTORIAL DE COMPRAS
 # ============================================================
+# ============================================================
+# HISTORIAL DE COMPRAS
+# ============================================================
 @app.route("/historial")
 def historial():
     user = usuario_actual()
     if not user:
         return redirect(url_for("login"))
 
-    compras = list(db.compras.find({"user_id": user["_id"]}))
+    # Convertir user["_id"] a ObjectId si es necesario
+    user_id = user["_id"]
+
+    # obtener compras del usuario
+    compras = list(db.compras.find({"user_id": user_id}))
 
     return render_template("historial.html",
                            user=user,
                            compras=compras)
+
 
 
 # ============================================================

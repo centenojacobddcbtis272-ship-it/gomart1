@@ -11,14 +11,26 @@
     {% for compra in compras %}
     <div class="card mb-3">
         <div class="card-body">
-            <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
-            <p><strong>Artículos:</strong></p>
 
+            <!-- Fecha -->
+            <p><strong>Fecha:</strong> {{ compra.fecha }}</p>
+
+            <!-- Listado de artículos -->
+            <p><strong>Artículos:</strong></p>
             <ul>
                 {% for item in compra.items %}
-                <li>{{ item.nombre }} x {{ item.cantidad }} — ${{ item.precio }}</li>
+                <li>
+                    {{ item.nombre }} x {{ item.cantidad }} —
+                    ${{ "%.2f"|format(item.precio) }}
+                </li>
                 {% endfor %}
             </ul>
+
+            <!-- Total -->
+            <p class="mt-3">
+                <strong>Total pagado:</strong>
+                ${{ "%.2f"|format(compra.total) }}
+            </p>
 
         </div>
     </div>
