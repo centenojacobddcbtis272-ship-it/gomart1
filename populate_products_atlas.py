@@ -34,10 +34,10 @@ items = [
     # DULCES
     {"nombre": "Chocolate Hershey 40g", "precio": 15,
      "categoria": "Dulces",
-     "imagen": "/static/img/productos/chocolatehershey.webp"},
+     "imagen": "/static/img/productos/chocolatehershey´s.webp"},
     {"nombre": "M&M's 49g", "precio": 25,
      "categoria": "Dulces",
-     "imagen": "/static/img/productos/MYMS.webp"},
+     "imagen": "/static/img/productos/M&M´s.webp"},
 
     # LIMPIEZA
     {"nombre": "Cloro Cloralex 1L", "precio": 22,
@@ -48,15 +48,15 @@ items = [
      "imagen": "/static/img/productos/ZOTE400G.webp"},
     {"nombre": "Pinol 1L", "precio": 30.0,
      "categoria": "Limpieza",
-     "imagen": "/static/img/productos/pinol1l.webp"},   # ← CORRECTO
+     "imagen": "/static/img/productos/pinol.webp"},   # ← CORRECTO
 
     # HIGIENE PERSONAL
     {"nombre": "Shampoo Head & Shoulders 375ml", "precio": 55.0,
      "categoria": "Higiene personal",
-     "imagen": "/static/img/productos/h&s375ml.webp"},  # ← CORRECTO
+     "imagen": "/static/img/productos/head.webp"},  # ← CORRECTO
     {"nombre": "Jabón Dove 135g", "precio": 22.0,
      "categoria": "Higiene personal",
-     "imagen": "/static/img/productos/jabon_dove.webp"}, # ← CORRECTO
+     "imagen": "/static/img/productos/dove.webp"}, # ← CORRECTO
 
     # ABARROTES
     {"nombre": "Arroz Verde Valle 1kg", "precio": 32,
