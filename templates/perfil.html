@@ -1,31 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div class="container mt-5">
+<div class="container mt-5 d-flex justify-content-center">
 
-    <h3>Mi perfil</h3>
-    <hr>
-
-    <div class="card" style="max-width: 450px;">
+    <div class="card shadow" style="max-width: 450px; width: 100%;">
         <div class="card-body">
 
+            <h3 class="text-center mb-3">Mi perfil</h3>
+            <hr>
+
+            <!-- FOTO -->
             <div class="text-center mb-3">
                 {% if user.foto %}
-                <img src="{{ user.foto }}" class="rounded-circle" width="120">
+                <img src="{{ user.foto }}" class="rounded-circle" width="140" height="140" style="object-fit: cover;">
                 {% else %}
-                <img src="/static/img/perfiles/default.png" class="rounded-circle" width="120">
+                <img src="/static/img/perfiles/default.png" class="rounded-circle" width="140" height="140"
+                    style="object-fit: cover;">
                 {% endif %}
             </div>
 
+            <!-- DATOS -->
             <p><strong>Nombre:</strong> {{ user.nombre_completo }}</p>
             <p><strong>Correo:</strong> {{ user.correo }}</p>
 
+            <!-- NUEVO: DIRECCIÓN -->
+            <p>
+                <strong>Dirección:</strong>
+                {{ user.direccion if user.direccion else "Sin dirección" }}
+            </p>
+
             <hr>
 
-            <a href="{{ url_for('editar_perfil') }}" class="btn btn-primary mb-2 w-100">Editar nombre</a>
-            <a href="{{ url_for('cambiar_password') }}" class="btn btn-warning mb-2 w-100">Cambiar contraseña</a>
-            <a href="{{ url_for('cambiar_foto') }}" class="btn btn-info mb-2 w-100 text-white">Cambiar foto</a>
-            <a href="{{ url_for('historial') }}" class="btn btn-success w-100">Historial de compras</a>
+            <!-- BOTONES -->
+            <a href="{{ url_for('editar_perfil') }}" class="btn btn-primary mb-2 w-100">
+                Editar información
+            </a>
+
+            <a href="{{ url_for('cambiar_password') }}" class="btn btn-warning mb-2 w-100">
+                Cambiar contraseña
+            </a>
+
+            <a href="{{ url_for('cambiar_foto') }}" class="btn btn-info mb-2 w-100 text-white">
+                Cambiar foto
+            </a>
+
+            <a href="{{ url_for('historial') }}" class="btn btn-success w-100">
+                Historial de compras
+            </a>
 
         </div>
     </div>

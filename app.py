@@ -404,10 +404,14 @@ def editar_perfil():
 
     if request.method == "POST":
         nuevo_nombre = request.form["nombre"]
+        nueva_direccion = request.form.get("direccion", "")
 
         db.usuarios.update_one(
             {"_id": user["_id"]},
-            {"$set": {"nombre_completo": nuevo_nombre}}
+            {"$set": {
+                "nombre_completo": nuevo_nombre,
+                "direccion": nueva_direccion
+            }}
         )
 
         return redirect(url_for("perfil"))
