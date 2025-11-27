@@ -30,20 +30,21 @@ productos = [
     # ---------------- DULCES ----------------
     {"nombre": "Chocolate Hershey 40g", "precio": 15,
      "categoria": "Dulces",
-     "imagen": "/static/img/productos/chocolatehershey´s.webp"},
+     "imagen": "/static/img/productos/chocolatehersheys.webp"},
 
     {"nombre": "M&M's 49g", "precio": 25,
      "categoria": "Dulces",
-     "imagen": "/static/img/productos/M&M´s.webp"},
+     "imagen": "/static/img/productos/MandMs.webp"},
 
     # ---------------- HOGAR ----------------
     {"nombre": "Cloro Cloralex 1L", "precio": 22,
      "categoria": "Limpieza",
-     "imagen": "/static/img/productos/cloro Cloralex.webp"},
+     "imagen": "/static/img/productos/cloroCloralex.webp"},
 
     {"nombre": "Jabón Zote Rosa 400g", "precio": 12,
      "categoria": "Limpieza",
      "imagen": "/static/img/productos/ZOTE400G.webp"},
+
 
     # ---------------- ABARROTES ----------------
     {"nombre": "Arroz Verde Valle 1kg", "precio": 32,
